@@ -1,0 +1,44 @@
+using FoodApp.Data;
+using FoodApp.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
+
+[Route("FoodItems")]
+public class FoodItemsController : Controller
+{
+    private readonly ApplicationDbContext _context;
+
+    public FoodItemsController(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    // GET: FoodItems
+    public IActionResult Index()
+    {
+        return Content("This is the FoodItems index page.");
+            // var foodItems = _context.FoodItems.ToList();
+            // return View(foodItems);
+    }
+
+    // GET: FoodItems/Create
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    // POST: FoodItems/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("Id,Name,Description")] FoodItem foodItem)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Add(foodItem);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        return View(foodItem);
+    }
+}

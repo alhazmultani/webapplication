@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    image: your-web-app-image  # 
+    build:
+      context: ./app  # Directory containing Dockerfile and source code
+    ports:
+      - "8000:8000"  # Expose the app on port 8000
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=restaurant_db
+    volumes:
+      - app-data:/app  # Mount volume for persistent application data
+
+  db:
+    image: mysql:5.7  # Using MySQL version 5.7
+    ports:
+      - "3306:3306"  # Expose MySQL on port 3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=example  # Set the MySQL root password
+      - MYSQL_DATABASE=restaurant_db  # Create a database for the app
+    volumes:
+      - db-data:/var/lib/mysql  # Mount volume for persistent database storage
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"  # Expose PHPMyAdmin on port 8080
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=example
+
+volumes:
+  app-data:  # Named volume for the app data
+  db-data:   # Named volume for the database data
